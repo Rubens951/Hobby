@@ -1,0 +1,43 @@
+#Python3.7
+from selenium import webdriver
+import time
+from selenium.webdriver.common.keys import Keys
+import itertools as it
+from webdriver_manager.chrome import ChromeDriverManager
+
+driver=webdriver.Chrome(ChromeDriverManager().install())
+driver.get('https://web.whatsapp.com/')
+time.sleep(30)
+contacts=['Names', 'separate', 'by' , 'comma']
+message='Type here your personal message for the bot to send'
+def search_contact(contact):
+    search_field=driver.find_element_by_xpath('//div[contains(@class,"copyable-text selectable-text")]')
+    time.sleep(3)
+    search_field.click()
+    search_field.send_keys(contato)    
+def send_message(message):
+    message_field=driver.find_elements_by_xpath('//div[contains(@class,"copyable-text selectable-text")]')
+    message_field[[1].click()
+    time.sleep(3)
+    message_field[[1].send_keys(mensagem)
+    message_field[[1].send_keys(Keys.ENTER)
+def backspace_contact(contact):
+    delete_field=driver.find_element_by_xpath('//div[contains(@class,"copyable-text selectable-text")]')
+    delete_field.click()
+    time.sleep(3)
+    a=len(contact)
+    i=0
+    while i<=a:
+        delete_field.send_keys(Keys.BACKSPACE)
+        i=i+1
+for contact in it.cycle(contacts):
+    search_contact(contact)
+    time.sleep(3)
+    try:
+        unread=driver.find_element_by_class_name('_2Q3SY')
+        unread.click()
+        time.sleep(3)
+        send_message(message)
+    except:
+        backspace_contact(contact)
+        pass
