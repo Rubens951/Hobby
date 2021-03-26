@@ -1,0 +1,49 @@
+#Python3.7
+from qutip import*
+import numpy as np
+import matplotlib.pyplot as plt
+import datetime
+
+t1= datetime.datetime.now()
+gamma=1
+omega=4*gamma
+
+E1=0
+E3=1
+w=E1-E3
+
+t=np.linspace(0,20,1000)
+psi0=tensor(basis(2,0),basis(2,0),basis(2,1))
+d1=tensor(sigmam(),sigmaz(),sigmaz())
+d2=tensor(qeye(2),sigmam(),sigmaz())
+d3=tensor(qeye(2),qeye(2),sigmam())
+
+lista=np.linspace(-4,4,1000)
+listaE2=[]
+listaR=[]
+def H1_coef(t,args):
+    return np.exp(-1j*w*t)
+def H2_coef(t,args):
+    return np.exp(1j*w*t)
+H1=omega*d1.dag()*d3
+H2=H1.dag()
+SC=gamma*d1.dag()*d2.dag()  
+for E2 in lista:
+    SE=E1*d1.dag()*d1+E2*d2.dag()*d2+E3*d3.dag()*d3 
+    H0=SE+SE.dag()+SC+SC.dag()
+    H=[H0,[H1,H1_coef],[H2,H2_coef]]
+    result=mesolve(H,psi0,t,[],[d2.dag()*d2])
+    listaR.append(result.expect[0])
+    listaE2.append(E2)
+    
+X,Y=np.meshgrid(t,listaE2)
+Z=listaR
+fig,ax=plt.subplots(1,1)
+cp = ax.contourf(X, Y, Z)
+fig.colorbar(cp) # Add a colorbar to a plot
+ax.set_title('Ocuppation')
+ax.set_xlabel('Ωt (π)')
+ax.set_ylabel('δE (Ω)')
+plt.show()
+t2= datetime.datetime.now()
+print(t2-t1)
